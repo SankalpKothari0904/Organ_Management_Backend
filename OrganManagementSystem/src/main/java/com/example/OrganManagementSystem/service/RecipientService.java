@@ -2,6 +2,7 @@ package com.example.OrganManagementSystem.service;
 
 import com.example.OrganManagementSystem.dao.PatientInfoDAO;
 import com.example.OrganManagementSystem.dao.RecipientDAO;
+import com.example.OrganManagementSystem.entity.Donor;
 import com.example.OrganManagementSystem.entity.PatientInformation;
 import com.example.OrganManagementSystem.entity.Recipient;
 import com.example.OrganManagementSystem.exception.PatientNotFoundException;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class RecipientService {
@@ -22,7 +22,7 @@ public class RecipientService {
         this.recipientDAO = recipientDAO;
     }
 
-    public List<Recipient> getRecipientByPatientId(UUID id) throws PatientNotFoundException{
+    public List<Recipient> getRecipientByPatientId(Integer id) throws PatientNotFoundException{
         Optional<PatientInformation> patientInformation = this.patientInfoDAO.findById(id);
         if (patientInformation.isEmpty()){
             throw new PatientNotFoundException();
@@ -38,11 +38,15 @@ public class RecipientService {
         return recipientDAO.save(recipient);
     }
 
-    public Optional<Recipient> viewInfoById(UUID id) throws RecipientNotFoundException {
+    public Optional<Recipient> viewInfoById(Integer id) throws RecipientNotFoundException {
         Optional<Recipient> recipient = this.recipientDAO.findById(id);
         if (recipient.isEmpty()){
             throw new RecipientNotFoundException();
         }
         return recipient;
+    }
+
+    public List<Recipient> getAllRecipients(){
+        return (List<Recipient>)recipientDAO.findAll();
     }
 }

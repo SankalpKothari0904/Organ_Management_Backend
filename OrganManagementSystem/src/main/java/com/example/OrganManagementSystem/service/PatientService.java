@@ -6,7 +6,6 @@ import com.example.OrganManagementSystem.exception.PatientNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.UUID;
 import java.util.Optional;
 
 @Service
@@ -28,11 +27,11 @@ public class PatientService {
         return patientInfoDAO.save(patientInformation);
     }
 
-    public PatientInformation viewPatientByUserId(UUID id) {
+    public PatientInformation viewPatientByUserId(Integer id) {
         return patientInfoDAO.getPatientByUserId(id);
     }
 
-    public Optional<PatientInformation> viewPatientInfo(UUID id) throws PatientNotFoundException {
+    public Optional<PatientInformation> viewPatientInfo(Integer id) throws PatientNotFoundException {
         Optional<PatientInformation> patientInformation = this.patientInfoDAO.findById(id);
         if (patientInformation.isEmpty()){
             throw new PatientNotFoundException();

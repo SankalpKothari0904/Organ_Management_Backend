@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface DoctorInfoDAO extends CrudRepository<DoctorInformation, UUID> {
+public interface DoctorInfoDAO extends CrudRepository<DoctorInformation, Integer> {
     @Query("SELECT dc from DoctorInformation dc where dc.user.id = :id")
-    DoctorInformation getDoctorByUserId(@Param("id") UUID id);
+    DoctorInformation getDoctorByUserId(@Param("id") Integer id);
 }

@@ -2,16 +2,15 @@ package com.example.OrganManagementSystem.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Table(name = "patient_info")
 public class PatientInformation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "patient_id")
-    private UUID patientId;
+    private Integer patientId;
 
     @OneToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "user_id")
@@ -45,11 +44,11 @@ public class PatientInformation {
 
     }
 
-    public UUID getPatientId() {
+    public Integer getPatientId() {
         return patientId;
     }
 
-    public void setPatientId(UUID reg_id) {
+    public void setPatientId(Integer reg_id) {
         this.patientId = reg_id;
     }
 

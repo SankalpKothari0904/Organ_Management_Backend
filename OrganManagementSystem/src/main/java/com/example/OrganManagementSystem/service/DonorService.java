@@ -25,7 +25,7 @@ public class DonorService {
         this.donorDAO = donorDAO;
     }
 
-    public List<Donor> getDonorByPatientId(UUID id) throws PatientNotFoundException {
+    public List<Donor> getDonorByPatientId(Integer id) throws PatientNotFoundException {
         Optional<PatientInformation> patientInformation = this.patientInfoDAO.findById(id);
         if (patientInformation.isEmpty()){
             throw new PatientNotFoundException();
@@ -37,15 +37,15 @@ public class DonorService {
         return donorDAO.save(donor);
     }
 
-    public Donor updateInfo(Donor donor){
-        return donorDAO.save(donor);
-    }
-
-    public Optional<Donor> viewInfoById(UUID id) throws DonorNotFoundException {
+    public Optional<Donor> viewInfoById(Integer id) throws DonorNotFoundException {
         Optional<Donor> donor = this.donorDAO.findById(id);
         if (donor.isEmpty()){
             throw new DonorNotFoundException();
         }
         return donor;
+    }
+
+    public List<Donor> getAllDonors(){
+        return (List<Donor>)donorDAO.findAll();
     }
 }

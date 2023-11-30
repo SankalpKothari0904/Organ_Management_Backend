@@ -39,6 +39,7 @@ public class PatientRestController {
         PatientInformation patientInformation = user.getPatientInformation();
         theInfo.setUser(user);
         theInfo.setPatientId(patientInformation.getPatientId());
+        theInfo.setBloodType(patientInformation.getBloodType());
         return patientService.updatePatientInfo(theInfo);
     }
 

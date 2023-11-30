@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @CrossOrigin
@@ -21,32 +20,22 @@ public class MatchRestController {
     }
 
     @GetMapping("/donor/{id}")
-    public DonorRecipientMatch getByDonorId(@PathVariable UUID id){
+    public DonorRecipientMatch getByDonorId(@PathVariable Integer id){
         return matchService.getMatchByDonorId(id);
     }
 
     @GetMapping("/recipient/{id}")
-    public DonorRecipientMatch getByRecipientId(@PathVariable UUID id){
+    public DonorRecipientMatch getByRecipientId(@PathVariable Integer id){
         return matchService.getMatchByRecipientId(id);
     }
 
     @GetMapping("/patient/donor/{id}")
-    public List<DonorRecipientMatch> getByDonorPatientId(@PathVariable UUID id){
+    public List<DonorRecipientMatch> getByDonorPatientId(@PathVariable Integer id){
         return matchService.getMatchesByDonorPatientId(id);
     }
 
     @GetMapping("/patient/recipient/{id}")
-    public List<DonorRecipientMatch> getByRecipientPatientId(@PathVariable UUID id){
+    public List<DonorRecipientMatch> getByRecipientPatientId(@PathVariable Integer id){
         return matchService.getMatchesByRecipientPatientId(id);
-    }
-
-    @PostMapping("/add")
-    public DonorRecipientMatch addMatch(@RequestBody DonorRecipientMatch donorRecipientMatch){
-        return matchService.addMatch(donorRecipientMatch);
-    }
-
-    @PutMapping("/update")
-    public DonorRecipientMatch updateMatch(@RequestBody DonorRecipientMatch donorRecipientMatch){
-        return matchService.updateMatch(donorRecipientMatch);
     }
 }

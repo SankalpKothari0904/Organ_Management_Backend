@@ -34,7 +34,7 @@ public class AdminService {
         return (List<DoctorInformation>) doctorInfoDAO.findAll();
     }
 
-    public Optional<PatientInformation> showPatientById(UUID id) throws PatientNotFoundException {
+    public Optional<PatientInformation> showPatientById(Integer id) throws PatientNotFoundException {
         Optional<PatientInformation> patientInformation = this.patientInfoDAO.findById(id);
         if (patientInformation.isEmpty()){
             throw new PatientNotFoundException();
@@ -42,7 +42,7 @@ public class AdminService {
         return patientInformation;
     }
 
-    public Optional<DoctorInformation> showDoctorById(UUID id) {
+    public Optional<DoctorInformation> showDoctorById(Integer id) {
         Optional<DoctorInformation> theDoctorInformation = this.doctorInfoDAO.findById(id);
 
         if (theDoctorInformation.isEmpty()) {

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/doctor")
@@ -33,7 +32,7 @@ public class DoctorRestController {
     }
 
     @GetMapping("/viewPatients/{id}")
-    public Optional<PatientInformation> viewPatientById(@PathVariable UUID id, @RequestHeader String Authorization){
+    public Optional<PatientInformation> viewPatientById(@PathVariable Integer id, @RequestHeader String Authorization){
         return doctorService.showPatientById(id);
     }
 

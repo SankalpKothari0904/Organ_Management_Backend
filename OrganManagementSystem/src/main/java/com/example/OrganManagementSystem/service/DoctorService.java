@@ -25,7 +25,7 @@ public class DoctorService {
         this.doctorInfoDAO = doctorInfoDAO;
     }
 
-    public DoctorInformation getDoctorByUserId(UUID id){
+    public DoctorInformation getDoctorByUserId(Integer id){
         return doctorInfoDAO.getDoctorByUserId(id);
     }
 
@@ -37,7 +37,7 @@ public class DoctorService {
         return (List<PatientInformation>) patientInfoDAO.findAll();
     }
 
-    public Optional<PatientInformation> showPatientById(UUID id) throws PatientNotFoundException {
+    public Optional<PatientInformation> showPatientById(Integer id) throws PatientNotFoundException {
         Optional<PatientInformation> patientInformation = this.patientInfoDAO.findById(id);
         if (patientInformation.isEmpty()){
             throw new PatientNotFoundException();
@@ -45,7 +45,7 @@ public class DoctorService {
         return patientInformation;
     }
 
-    public Optional<DoctorInformation> viewMyInfo(UUID Id) throws DoctorNotFoundException {
+    public Optional<DoctorInformation> viewMyInfo(Integer Id) throws DoctorNotFoundException {
         Optional<DoctorInformation> doctorInformation = this.doctorInfoDAO.findById(Id);
         if (doctorInformation.isEmpty()){
             throw new DoctorNotFoundException();

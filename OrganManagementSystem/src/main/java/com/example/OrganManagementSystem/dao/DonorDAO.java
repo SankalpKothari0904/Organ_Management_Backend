@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface DonorDAO extends CrudRepository<Donor, UUID> {
+public interface DonorDAO extends CrudRepository<Donor, Integer> {
     @Query("SELECT d from Donor d where d.patientInformation.patientId = :id")
-    List<Donor> getDonorByPatientId(@Param("id") UUID id);
+    List<Donor> getDonorByPatientId(@Param("id") Integer id);
 }

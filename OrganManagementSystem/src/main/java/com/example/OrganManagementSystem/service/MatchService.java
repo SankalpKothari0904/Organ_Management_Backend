@@ -36,7 +36,7 @@ public class MatchService {
         this.patientInformationDAO = patientInformationDAO;
     }
 
-    public DonorRecipientMatch getMatchByDonorId(UUID id) throws DonorNotFoundException{
+    public DonorRecipientMatch getMatchByDonorId(Integer id) throws DonorNotFoundException{
         Optional<Donor> donor = this.donorDAO.findById(id);
         if (donor.isEmpty()){
             throw new DonorNotFoundException();
@@ -44,7 +44,7 @@ public class MatchService {
         return this.donorRecipientMatchDAO.getMatchByDonorId(id);
     }
 
-    public DonorRecipientMatch getMatchByRecipientId(UUID id) throws RecipientNotFoundException {
+    public DonorRecipientMatch getMatchByRecipientId(Integer id) throws RecipientNotFoundException {
         Optional< Recipient> recipient = this.recipientDAO.findById(id);
         if (recipient.isEmpty()){
             throw new RecipientNotFoundException();
@@ -52,7 +52,7 @@ public class MatchService {
         return this.donorRecipientMatchDAO.getMatchByRecipientId(id);
     }
 
-    public List<DonorRecipientMatch> getMatchesByDonorPatientId(UUID id) throws PatientNotFoundException {
+    public List<DonorRecipientMatch> getMatchesByDonorPatientId(Integer id) throws PatientNotFoundException {
         Optional<PatientInformation> patientInformation = this.patientInformationDAO.findById(id);
         if (patientInformation.isEmpty()){
             throw new PatientNotFoundException();
@@ -60,7 +60,7 @@ public class MatchService {
         return this.donorRecipientMatchDAO.getMatchesByDonorPatientId(id);
     }
 
-    public List<DonorRecipientMatch> getMatchesByRecipientPatientId(UUID id) throws PatientNotFoundException {
+    public List<DonorRecipientMatch> getMatchesByRecipientPatientId(Integer id) throws PatientNotFoundException {
         Optional<PatientInformation> patientInformation = this.patientInformationDAO.findById(id);
         if (patientInformation.isEmpty()){
             throw new PatientNotFoundException();
@@ -69,20 +69,6 @@ public class MatchService {
     }
 
     public DonorRecipientMatch addMatch(DonorRecipientMatch donorRecipientMatch) throws DonorNotFoundException, RecipientNotFoundException {
-        Optional<Donor> donor = this.donorDAO.findById(donorRecipientMatch.getDonor().getDonorId());
-        if (donor.isEmpty()){
-            throw new DonorNotFoundException();
-        }
-
-        Optional<Recipient> recipient = this.recipientDAO.findById(donorRecipientMatch.getRecipient().getRecipientId());
-        if (recipient.isEmpty()){
-            throw new RecipientNotFoundException();
-        }
-
-        return donorRecipientMatchDAO.save(donorRecipientMatch);
-    }
-
-    public DonorRecipientMatch updateMatch(DonorRecipientMatch donorRecipientMatch) throws DonorNotFoundException, RecipientNotFoundException {
         Optional<Donor> donor = this.donorDAO.findById(donorRecipientMatch.getDonor().getDonorId());
         if (donor.isEmpty()){
             throw new DonorNotFoundException();

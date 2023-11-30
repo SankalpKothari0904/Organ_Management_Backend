@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface RecipientDAO extends CrudRepository<Recipient, UUID> {
+public interface RecipientDAO extends CrudRepository<Recipient, Integer> {
     @Query("SELECT r from Recipient r where r.patientInformation.patientId = :id")
-    List<Recipient> getRecipientByPatientId(@Param("id") UUID id);
+    List<Recipient> getRecipientByPatientId(@Param("id") Integer id);
 
     @Query("SELECT r from Recipient r")
     List<Recipient> getAll(Sort sort);

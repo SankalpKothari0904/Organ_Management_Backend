@@ -3,20 +3,17 @@ package com.example.OrganManagementSystem.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
-import java.util.UUID;
-
 @Entity
 @Table(name = "recipient")
 public class Recipient {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "recipient_id")
-    private UUID recipientId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "rec_id")
+    private Integer recipientId;
 
     @OneToOne(cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH })
     @JoinColumn(name = "patient_id")
-    @JsonIgnore
     private PatientInformation patientInformation;
 
     @Column(name = "organ_requested")
@@ -41,11 +38,11 @@ public class Recipient {
         this.priority = priority;
     }
 
-    public UUID getRecipientId() {
+    public Integer getRecipientId() {
         return recipientId;
     }
 
-    public void setRecipientId(UUID recipientId) {
+    public void setRecipientId(Integer recipientId) {
         this.recipientId = recipientId;
     }
 
