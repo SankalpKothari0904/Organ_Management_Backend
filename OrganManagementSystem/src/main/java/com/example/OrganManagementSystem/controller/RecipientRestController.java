@@ -1,11 +1,13 @@
 package com.example.OrganManagementSystem.controller;
 
 import com.example.OrganManagementSystem.config.JwtTokenUtil;
+import com.example.OrganManagementSystem.entity.DonorRecipientMatch;
 import com.example.OrganManagementSystem.entity.Recipient;
 import com.example.OrganManagementSystem.entity.User;
 import com.example.OrganManagementSystem.exception.RecipientNotFoundException;
 import com.example.OrganManagementSystem.exception.UnauthorisedUserException;
 import com.example.OrganManagementSystem.service.JwtUserDetailsService;
+import com.example.OrganManagementSystem.service.MatchService;
 import com.example.OrganManagementSystem.service.RecipientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +23,14 @@ public class RecipientRestController {
     private RecipientService recipientService;
     private JwtUserDetailsService jwtUserDetailsService;
     private JwtTokenUtil jwtTokenUtil;
+    private MatchService matchService;
 
     @Autowired
-    public RecipientRestController(RecipientService recipientService, JwtUserDetailsService jwtUserDetailsService, JwtTokenUtil jwtTokenUtil){
+    public RecipientRestController(RecipientService recipientService, JwtUserDetailsService jwtUserDetailsService, JwtTokenUtil jwtTokenUtil, MatchService matchService){
         this.recipientService = recipientService;
         this.jwtTokenUtil = jwtTokenUtil;
         this.jwtUserDetailsService = jwtUserDetailsService;
+        this.matchService = matchService;
     }
 
     @GetMapping("/viewInfo")
@@ -50,13 +54,14 @@ public class RecipientRestController {
     }
 
     @PostMapping("/addInfo")
-    public Recipient addRecipientInfo(@RequestHeader String Authorization, @RequestBody Recipient recipient){
+    public DonorRecipientMatch addRecipientInfo(@RequestHeader String Authorization, @RequestBody Recipient recipient){
         User user = this.jwtUserDetailsService.getUserByUsername(this.jwtTokenUtil.getUsernameFromToken(Authorization.substring(7)));
         recipient.setPatientInformation(user.getPatientInformation());
-        return recipientService.addInfo(recipient);
+        Recipient r = recipientService.addInfo(recipient);
+        return matchService.matchRecipientToDonor(r);
     }
 
-    @PostMapping("/updateInfo")
+    @PutMapping("/updateInfo")
     public Recipient updateRecipientInfo(@RequestHeader String Authorization, @RequestBody Recipient recipient){
         User user = this.jwtUserDetailsService.getUserByUsername(this.jwtTokenUtil.getUsernameFromToken(Authorization.substring(7)));
         recipient.setPatientInformation(user.getPatientInformation());

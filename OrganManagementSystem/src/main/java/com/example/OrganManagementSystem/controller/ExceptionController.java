@@ -33,5 +33,10 @@ public class ExceptionController {
     public ResponseEntity<Object> recipientNotFoundException(RecipientNotFoundException recipientNotFoundException){
         return new ResponseEntity<>("Recipient not found for given id", HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(MatchNotFoundException.class)
+    public ResponseEntity<Object> matchNotFoundException(MatchNotFoundException matchNotFoundException){
+        return new ResponseEntity<>("Added but currently no matches found/available", HttpStatus.OK);
+    }
 }
 

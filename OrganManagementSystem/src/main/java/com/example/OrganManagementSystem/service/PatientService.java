@@ -2,6 +2,7 @@ package com.example.OrganManagementSystem.service;
 
 import com.example.OrganManagementSystem.dao.PatientInfoDAO;
 import com.example.OrganManagementSystem.entity.PatientInformation;
+import com.example.OrganManagementSystem.exception.PatientNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,8 +32,12 @@ public class PatientService {
         return patientInfoDAO.getPatientByUserId(id);
     }
 
-    public Optional<PatientInformation> viewPatientInfo(UUID id) {
-        return patientInfoDAO.findById(id);
+    public Optional<PatientInformation> viewPatientInfo(UUID id) throws PatientNotFoundException {
+        Optional<PatientInformation> patientInformation = this.patientInfoDAO.findById(id);
+        if (patientInformation.isEmpty()){
+            throw new PatientNotFoundException();
+        }
+        return patientInformation;
     }
 }
 

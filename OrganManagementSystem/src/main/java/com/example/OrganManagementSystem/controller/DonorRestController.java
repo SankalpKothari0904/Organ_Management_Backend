@@ -2,11 +2,13 @@ package com.example.OrganManagementSystem.controller;
 
 import com.example.OrganManagementSystem.config.JwtTokenUtil;
 import com.example.OrganManagementSystem.entity.Donor;
+import com.example.OrganManagementSystem.entity.DonorRecipientMatch;
 import com.example.OrganManagementSystem.entity.User;
 import com.example.OrganManagementSystem.exception.DonorNotFoundException;
 import com.example.OrganManagementSystem.exception.UnauthorisedUserException;
 import com.example.OrganManagementSystem.service.DonorService;
 import com.example.OrganManagementSystem.service.JwtUserDetailsService;
+import com.example.OrganManagementSystem.service.MatchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +23,14 @@ public class DonorRestController {
     private DonorService donorService;
     private JwtUserDetailsService jwtUserDetailsService;
     private JwtTokenUtil jwtTokenUtil;
+    private MatchService matchService;
 
     @Autowired
-    public DonorRestController(DonorService donorService, JwtUserDetailsService jwtUserDetailsService, JwtTokenUtil jwtTokenUtil){
+    public DonorRestController(DonorService donorService, JwtUserDetailsService jwtUserDetailsService, JwtTokenUtil jwtTokenUtil, MatchService matchService){
         this.donorService = donorService;
         this.jwtTokenUtil = jwtTokenUtil;
         this.jwtUserDetailsService = jwtUserDetailsService;
+        this.matchService = matchService;
     }
 
     @GetMapping("/viewInfo")
@@ -50,13 +54,14 @@ public class DonorRestController {
     }
 
     @PostMapping("/addInfo")
-    public Donor addDonorInfo(@RequestHeader String Authorization, @RequestBody Donor donor){
+    public DonorRecipientMatch addDonorInfo(@RequestHeader String Authorization, @RequestBody Donor donor){
         User user = this.jwtUserDetailsService.getUserByUsername(this.jwtTokenUtil.getUsernameFromToken(Authorization.substring(7)));
         donor.setPatientInformation(user.getPatientInformation());
-        return donorService.addInfo(donor);
+        Donor d = donorService.addInfo(donor);
+        return matchService.matchDonorToRecipient(d);
     }
 
-    @PostMapping("/updateInfo")
+    @PutMapping("/updateInfo")
     public Donor updateDonorInfo(@RequestHeader String Authorization, @RequestBody Donor donor){
         User user = this.jwtUserDetailsService.getUserByUsername(this.jwtTokenUtil.getUsernameFromToken(Authorization.substring(7)));
         donor.setPatientInformation(user.getPatientInformation());

@@ -51,30 +51,23 @@ public class WebSecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests((configurer) -> {
                     configurer.requestMatchers("/authenticate", "/register_user").permitAll()
-                            // working, needed
                             .requestMatchers(HttpMethod.POST, "/register_doctor", "/register_admin").hasRole("ADMIN")
-                            // working, needed
-                            .requestMatchers(HttpMethod.GET, "/admin/doctors").hasRole("ADMIN")
-                            // working, needed
-                            .requestMatchers(HttpMethod.GET, "/admin/patients").hasRole("ADMIN")
-                            // working, needed
-                            .requestMatchers(HttpMethod.GET, "/admin/doctors/{doctor_id}").hasRole("ADMIN")
-                            // working, needed
-                            .requestMatchers(HttpMethod.GET, "/admin/patients/{patientId}").hasRole("ADMIN")
-                            // working, needed
-                            .requestMatchers(HttpMethod.POST, "/user/addPatientInfo").hasRole("USER")
-                            // working, needed
-                            .requestMatchers(HttpMethod.PUT, "/user/updateMyInfo").hasRole("USER")
-                            // working, needed
+                            .requestMatchers(HttpMethod.GET, "/admin/doctors","/admin/patients","/doctors/**","/patients/**").hasRole("ADMIN")
                             .requestMatchers(HttpMethod.GET, "/user/viewMyInfo").hasRole("USER")
-                            // working, needed
-                            .requestMatchers(HttpMethod.GET, "/doctor/viewPatients/**", "/doctor/viewPatients").hasRole("DOCTOR")
-                            // working, needed
-                            .requestMatchers(HttpMethod.PUT, "/doctor/updateMyInfo").hasRole("DOCTOR")
-                            // working, needed
-                            .requestMatchers(HttpMethod.GET, "/doctor/viewMyInfo").hasRole("DOCTOR")
-                            // working, needed
+                            .requestMatchers(HttpMethod.PUT, "/user/updateMyInfo").hasRole("USER")
+                            .requestMatchers(HttpMethod.POST, "/user/addPatientInfo").hasRole("USER")
+                            .requestMatchers(HttpMethod.GET, "/recipient/viewInfo/**", "/recipient/viewInfo").hasRole("USER")
+                            .requestMatchers(HttpMethod.POST, "/recipient/addInfo").hasRole("USER")
+                            .requestMatchers(HttpMethod.PUT, "/recipient/updateInfo").hasRole("USER")
+                            .requestMatchers(HttpMethod.GET, "/donor/viewInfo", "/donor/viewInfo/**").hasRole("USER")
+                            .requestMatchers(HttpMethod.POST, "/donor/addInfo").hasRole("USER")
+                            .requestMatchers(HttpMethod.PUT, "/donor/updateInfo").hasRole("USER")
+                            .requestMatchers(HttpMethod.GET, "/doctor/viewPatients","/doctor/viewPatients/**","/doctor/viewMyInfo").hasRole("DOCTOR")
                             .requestMatchers(HttpMethod.POST, "/doctor/addMyInfo").hasRole("DOCTOR")
+                            .requestMatchers(HttpMethod.PUT, "/doctor/updateMyInfo").hasRole("DOCTOR")
+                            .requestMatchers(HttpMethod.GET, "/match/donor/**","/match/recipient/**","/match/patient/donor/**","/match/patient/recipient/**").hasAnyRole("DOCTOR","ADMIN","USER")
+                            .requestMatchers(HttpMethod.PUT, "/match/update").hasRole("DOCTOR")
+                            .requestMatchers(HttpMethod.POST, "/match/add").hasRole("DOCTOR")
                             .anyRequest().authenticated();
                 }).exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

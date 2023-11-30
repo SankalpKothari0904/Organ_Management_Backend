@@ -14,6 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/admin")
+@CrossOrigin
 public class AdminRestController {
 
     private AdminService adminService;
@@ -34,24 +35,12 @@ public class AdminRestController {
     }
 
     @GetMapping("/doctors/{doctorId}")
-    public Optional<DoctorInformation> getDoctorInformation(@PathVariable UUID doctorId) throws DoctorNotFoundException {
-        Optional<DoctorInformation> theDoctorInformation = adminService.showDoctorById(doctorId);
-
-        if (theDoctorInformation.isEmpty()) {
-            throw new DoctorNotFoundException();
-        }
-
-        return theDoctorInformation;
+    public Optional<DoctorInformation> getDoctorInformation(@PathVariable UUID doctorId) {
+        return adminService.showDoctorById(doctorId);
     }
 
     @GetMapping("/patients/{patientId}")
-    public Optional<PatientInformation> getPatientInformation(@PathVariable UUID patientId) throws PatientNotFoundException{
-        Optional<PatientInformation> thePatientInformation = adminService.showPatientById(patientId);
-
-        if (thePatientInformation.isEmpty()) {
-            throw new PatientNotFoundException();
-        }
-
-        return thePatientInformation;
+    public Optional<PatientInformation> getPatientInformation(@PathVariable UUID patientId){
+        return adminService.showPatientById(patientId);
     }
 }

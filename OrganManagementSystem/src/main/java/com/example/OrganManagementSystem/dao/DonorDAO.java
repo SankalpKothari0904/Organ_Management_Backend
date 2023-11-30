@@ -3,6 +3,7 @@ package com.example.OrganManagementSystem.dao;
 import com.example.OrganManagementSystem.entity.Donor;
 import com.example.OrganManagementSystem.entity.PatientInformation;
 import com.example.OrganManagementSystem.entity.Recipient;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
