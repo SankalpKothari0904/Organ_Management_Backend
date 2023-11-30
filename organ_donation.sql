@@ -55,6 +55,14 @@ CREATE TABLE doctor_info (
     constraint pk_doctorInfo PRIMARY KEY (doctor_id)
 );
 
+CREATE TABLE matches (
+    match_id BINARY(16) DEFAULT (UUID_TO_BIN(UUID(), 1)),
+    donor_id BINARY(16) NOT NULL,
+    rec_id BINARY(16) NOT NULL,
+    completed INTEGER,
+    constraint pk_matches PRIMARY KEY (match_id)
+);
+
 ALTER TABLE user_roles
 ADD CONSTRAINT fk_user_userRoles
 FOREIGN KEY (user_id) REFERENCES user(user_id);
@@ -78,3 +86,11 @@ FOREIGN KEY (patient_id) REFERENCES patient_info(patient_id);
 ALTER TABLE recipient
 ADD CONSTRAINT fk_recInfo
 FOREIGN KEY (patient_id) REFERENCES patient_info(patient_id);
+
+ALTER TABLE matches
+ADD CONSTRAINT fk_donorId
+FOREIGN KEY (donor_id) REFERENCES donor(donor_id);
+
+ALTER TABLE matches
+ADD CONSTRAINT fk_recId
+FOREIGN KEY (rec_id) REFERENCES recipient(rec_id);
