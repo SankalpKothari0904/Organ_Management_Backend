@@ -93,6 +93,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     }
 
     public User saveAdmin(UserDTO user){
+        System.out.println("Adding admin");
         User newUser = new User();
         newUser.setUsername(user.getUsername());
         newUser.setPassword(passwordEncoder().encode(user.getPassword()));
