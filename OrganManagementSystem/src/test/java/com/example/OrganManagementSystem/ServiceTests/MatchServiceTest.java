@@ -8,6 +8,7 @@ import com.example.OrganManagementSystem.entity.DonorRecipientMatch;
 import com.example.OrganManagementSystem.entity.PatientInformation;
 import com.example.OrganManagementSystem.entity.Recipient;
 import com.example.OrganManagementSystem.exception.DonorNotFoundException;
+import com.example.OrganManagementSystem.exception.MatchNotFoundException;
 import com.example.OrganManagementSystem.exception.PatientNotFoundException;
 import com.example.OrganManagementSystem.exception.RecipientNotFoundException;
 import com.example.OrganManagementSystem.service.MatchService;
@@ -53,7 +54,7 @@ public class MatchServiceTest {
     private Donor donor;
     private Recipient recipient;
     private PatientInformation patientInformation;
-
+    private PatientInformation patientInformation1;
     private List<Recipient> recipients;
     private List<Donor> donors;
 
@@ -68,17 +69,26 @@ public class MatchServiceTest {
         this.donorRecipientMatchList = new ArrayList<>();
         this.patientInformation = new PatientInformation("ABC","F","9090909090",33,"B+");
         this.patientInformation.setPatientId(1);
+        this.patientInformation1 = new PatientInformation("DEF", "M", "9898988989", 42, "B+");
+        this.patientInformation1.setPatientId(2);
 
         this.recipients = new ArrayList<>();
         Recipient temp1 = new Recipient(10, "Kidney", 10);
         temp1.setPatientInformation(patientInformation);
         Recipient temp2 = new Recipient(11, "Eyes", 9);
         temp2.setPatientInformation(patientInformation);
-        donor.setPatientInformation(patientInformation);
+        donor.setPatientInformation(patientInformation1);
         recipients.add(temp1);
         recipients.add(temp2);
 
         this.donors = new ArrayList<>();
+        Donor don1 = new Donor(1, "Kidney");
+        don1.setPatientInformation(patientInformation);
+        Donor don2 = new Donor(2, "Eyes");
+        don2.setPatientInformation(patientInformation);
+        recipient.setPatientInformation(patientInformation1);
+        donors.add(don1);
+        donors.add(don2);
     }
 
     @AfterEach
@@ -171,5 +181,56 @@ public class MatchServiceTest {
 
         DonorRecipientMatch donorRecipientMatch1 = this.matchService.matchDonorToRecipient(donor);
         verify(donorRecipientMatchDAO, times(1)).save(any());
+    }
+
+    @Test
+    public void givenNullDonorThrowException(){
+        when(donorDAO.findById(1)).thenReturn(Optional.empty());
+
+        assertThrows(DonorNotFoundException.class, ()->matchService.matchDonorToRecipient(donor));
+        verify(donorDAO, times(1)).findById(any());
+        verify(recipientDAO, never()).getAll(any());
+    }
+
+    @Test
+    public void givenNoMatchesForDonorThrowException(){
+        when(donorDAO.findById(1)).thenReturn(Optional.of(donor));
+        when(recipientDAO.getAll(any())).thenReturn(new ArrayList<>());
+
+        assertThrows(MatchNotFoundException.class, ()->matchService.matchDonorToRecipient(donor));
+        verify(donorDAO, times(1)).findById(any());
+        verify(recipientDAO, times(1)).getAll(any());
+        verify(donorRecipientMatchDAO, never()).save(any());
+    }
+
+    @Test
+    public void givenRecipientAddedFindMatches(){
+        when(recipientDAO.findById(1)).thenReturn(Optional.of(recipient));
+        when(donorDAO.findAll()).thenReturn(donors);
+        when(donorRecipientMatchDAO.getMatchByDonorId(any())).thenReturn(null);
+        when(donorDAO.findById(any())).thenReturn(Optional.of(donors.get(0)));
+
+        DonorRecipientMatch donorRecipientMatch1 = this.matchService.matchRecipientToDonor(recipient);
+        verify(donorRecipientMatchDAO, times(1)).save(any());
+    }
+
+    @Test
+    public void givenNullRecipientThrowException(){
+        when(recipientDAO.findById(1)).thenReturn(Optional.empty());
+
+        assertThrows(RecipientNotFoundException.class, ()->matchService.matchRecipientToDonor(recipient));
+        verify(recipientDAO, times(1)).findById(any());
+        verify(donorDAO, never()).findAll();
+    }
+
+    @Test
+    public void givenNoMatchesForRecipientThrowException(){
+        when(recipientDAO.findById(1)).thenReturn(Optional.of(recipient));
+        when(donorDAO.findAll()).thenReturn(new ArrayList<>());
+
+        assertThrows(MatchNotFoundException.class, ()->matchService.matchRecipientToDonor(recipient));
+        verify(recipientDAO, times(1)).findById(any());
+        verify(donorDAO, times(1)).findAll();
+        verify(donorRecipientMatchDAO, never()).save(any());
     }
 }

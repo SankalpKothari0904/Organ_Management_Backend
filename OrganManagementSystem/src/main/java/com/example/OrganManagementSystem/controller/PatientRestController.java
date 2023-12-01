@@ -36,7 +36,7 @@ public class PatientRestController {
     public PatientInformation updatePatientInfo(@RequestBody PatientInformation theInfo, @RequestHeader String Authorization) {
         String username = jwtTokenUtil.getUsernameFromToken(Authorization.substring(7));
         User user = jwtUserDetailsService.getUserByUsername(username);
-        PatientInformation patientInformation = user.getPatientInformation();
+        PatientInformation patientInformation = patientService.viewPatientByUserId(user.getId());
         theInfo.setUser(user);
         theInfo.setPatientId(patientInformation.getPatientId());
         theInfo.setBloodType(patientInformation.getBloodType());

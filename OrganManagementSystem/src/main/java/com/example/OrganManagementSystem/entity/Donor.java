@@ -26,6 +26,11 @@ public class Donor {
         this.organName = organName;
     }
 
+    public Donor(Integer id, String organName) {
+        this.donorId = id;
+        this.organName = organName;
+    }
+
     public Integer getDonorId() {
         return donorId;
     }
