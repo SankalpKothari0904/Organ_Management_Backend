@@ -102,7 +102,7 @@ public class RecipientServiceTest {
     }
 
     @Test
-    public void GivenRecipientNullWillThrowException(){
+    public void givenRecipientNullWillThrowException(){
         when(recipientDAO.findById(1)).thenReturn(Optional.empty());
         assertThrows(RecipientNotFoundException.class, ()->recipientService.viewInfoById(1));
         verify(recipientDAO, times(1)).findById(1);

@@ -1,10 +1,11 @@
 package com.example.OrganManagementSystem.ControllerTests;
 
 import com.example.OrganManagementSystem.config.JwtTokenUtil;
-import com.example.OrganManagementSystem.controller.PatientRestController;
-import com.example.OrganManagementSystem.entity.PatientInformation;
-import com.example.OrganManagementSystem.entity.User;
+import com.example.OrganManagementSystem.controller.DonorRestController;
+import com.example.OrganManagementSystem.entity.*;
+import com.example.OrganManagementSystem.service.DonorService;
 import com.example.OrganManagementSystem.service.JwtUserDetailsService;
+import com.example.OrganManagementSystem.service.MatchService;
 import com.example.OrganManagementSystem.service.PatientService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -24,12 +25,16 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@WebMvcTest(PatientRestController.class)
-public class PatientControllerTest {
+@WebMvcTest(DonorRestController.class)
+public class DonorControllerTest {
     @Autowired
     private ObjectMapper om;
     @Autowired
@@ -42,67 +47,93 @@ public class PatientControllerTest {
     private PatientService patientService;
 
     @MockBean
+    private DonorService donorService;
+    @MockBean
+    private MatchService matchService;
+
+    @MockBean
     private JwtUserDetailsService jwtUserDetailsService;
 
     @MockBean
     private JwtTokenUtil jwtTokenUtil;
 
     @InjectMocks
-    private PatientRestController patientRestController;
+    private DonorRestController donorRestController;
 
     private PatientInformation patientInformation;
+    private Donor donor;
+    private List<Donor> donorList;
 
     @BeforeEach
     public void setup(){
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         patientInformation = new PatientInformation(1, "ABC", "M", "1234567890", 20, "B+");
+        donor = new Donor(1, "Kidney");
+        donor.setPatientInformation(patientInformation);
+        donorList = new ArrayList<>();
+        donorList.add(donor);
     }
 
     @AfterEach
     public void tearDown(){
         mockMvc = null;
         patientInformation = null;
+        donor = null;
+        donorList = null;
+    }
+
+    @Test
+    @WithMockUser(username = "doc1", password = "test123", roles = "DOCTOR")
+    public void testViewAllDonors() throws Exception {
+        when(donorService.getAllDonors()).thenReturn(donorList);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/donor/getAll")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkb2MxIiwiaWF0IjoxNzAxMzY2NTkyLCJleHAiOjE3MDI1NzYxOTJ9.hTSEWT_DylwBnCDi5xe0TaMeROK-rcH_lBbzdiGsSFk"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].organName").value("Kidney"));
     }
 
     @Test
     @WithMockUser(username = "patient1", password = "test123", roles = "USER")
-    public void testViewMyInfo() throws Exception {
+    public void testViewDonorsByPatient() throws Exception {
         when(jwtUserDetailsService.getUserByUsername(any())).thenReturn(new User());
         when(patientService.viewPatientByUserId(any())).thenReturn(patientInformation);
+        when(donorService.getDonorByPatientId(any())).thenReturn(donorList);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/user/viewMyInfo")
+        mockMvc.perform(MockMvcRequestBuilders.get("/donor/viewInfo")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRpZW50MSIsImlhdCI6MTcwMTM2NzI0NiwiZXhwIjoxNzAyNTc2ODQ2fQ.i5dJkbNKzifod6q9HzoGUV35ngxIprgCYIxf_vIvI4I"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.pname").value("ABC"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].organName").value("Kidney"));
     }
 
     @Test
     @WithMockUser(username = "patient1", password = "test123", roles = "USER")
-    public void testUpdateMyInfo() throws Exception {
+    public void testViewDonorById() throws Exception {
         when(jwtUserDetailsService.getUserByUsername(any())).thenReturn(new User());
         when(patientService.viewPatientByUserId(any())).thenReturn(patientInformation);
-        when(patientService.updatePatientInfo(any())).thenReturn(patientInformation);
+        when(donorService.viewInfoById(any())).thenReturn(Optional.of(donor));
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/user/updateMyInfo")
+        mockMvc.perform(MockMvcRequestBuilders.get("/donor/viewInfo/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(om.writeValueAsString(patientInformation))
                         .header("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRpZW50MSIsImlhdCI6MTcwMTM2NzI0NiwiZXhwIjoxNzAyNTc2ODQ2fQ.i5dJkbNKzifod6q9HzoGUV35ngxIprgCYIxf_vIvI4I"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.pname").value("ABC"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.organName").value("Kidney"));
     }
 
     @Test
-    @WithMockUser(username = "patient1", password = "test123", roles = "USER")
-    public void testAddMyInfo() throws Exception {
-        when(jwtUserDetailsService.getUserByUsername(any())).thenReturn(new User());
-        when(patientService.addPatientInfo(any())).thenReturn(patientInformation);
+    @WithMockUser(username = "doc1", password = "test123", roles = "DOCTOR")
+    public void testAddDonor() throws Exception {
+        when(patientService.viewPatientInfo(any())).thenReturn(Optional.of(patientInformation));
+        when(donorService.addInfo(any())).thenReturn(donor);
+        when(matchService.matchDonorToRecipient(any())).thenReturn(new DonorRecipientMatch(1, donor, new Recipient(), 0));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/user/addPatientInfo")
+        mockMvc.perform(MockMvcRequestBuilders.post("/donor/addInfo/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(om.writeValueAsString(patientInformation))
-                        .header("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwYXRpZW50MSIsImlhdCI6MTcwMTM2NzI0NiwiZXhwIjoxNzAyNTc2ODQ2fQ.i5dJkbNKzifod6q9HzoGUV35ngxIprgCYIxf_vIvI4I"))
+                        .content(om.writeValueAsString(donor))
+                        .header("Authorization", "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkb2MxIiwiaWF0IjoxNzAxMzY2NTkyLCJleHAiOjE3MDI1NzYxOTJ9.hTSEWT_DylwBnCDi5xe0TaMeROK-rcH_lBbzdiGsSFk"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.pname").value("ABC"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.donor.organName").value("Kidney"));
     }
 }

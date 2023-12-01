@@ -38,7 +38,8 @@ public class DonorRestController {
     @GetMapping("/viewInfo")
     public List<Donor> viewDonor(@RequestHeader String Authorization){
         User user = this.jwtUserDetailsService.getUserByUsername(this.jwtTokenUtil.getUsernameFromToken(Authorization.substring(7)));
-        return donorService.getDonorByPatientId(user.getPatientInformation().getPatientId());
+        PatientInformation patientInformation = patientService.viewPatientByUserId(user.getId());
+        return donorService.getDonorByPatientId(patientInformation.getPatientId());
     }
 
     @GetMapping("/viewInfo/{id}")
@@ -46,9 +47,11 @@ public class DonorRestController {
         User user = this.jwtUserDetailsService.getUserByUsername(this.jwtTokenUtil.getUsernameFromToken(Authorization.substring(7)));
         Optional<Donor> donor = donorService.viewInfoById(id);
 
+        PatientInformation patientInformation = patientService.viewPatientByUserId(user.getId());
+
         if (donor.isEmpty()){
             throw new DonorNotFoundException();
-        }else if (!Objects.equals(donor.get().getPatientInformation().getPatientId(), user.getPatientInformation().getPatientId())){
+        }else if (!Objects.equals(donor.get().getPatientInformation().getPatientId(), patientInformation.getPatientId())){
             throw new UnauthorisedUserException();
         }
 

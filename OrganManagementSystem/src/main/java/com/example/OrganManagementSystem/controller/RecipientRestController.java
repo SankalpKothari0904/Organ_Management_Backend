@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -40,7 +41,8 @@ public class RecipientRestController {
     @GetMapping("/viewInfo")
     public List<Recipient> viewRecipient(@RequestHeader String Authorization){
         User user = this.jwtUserDetailsService.getUserByUsername(this.jwtTokenUtil.getUsernameFromToken(Authorization.substring(7)));
-        return recipientService.getRecipientByPatientId(user.getPatientInformation().getPatientId());
+        PatientInformation patientInformation = this.patientService.viewPatientByUserId(user.getId());
+        return recipientService.getRecipientByPatientId(patientInformation.getPatientId());
     }
 
     @GetMapping("/viewInfo/{id}")
@@ -48,9 +50,11 @@ public class RecipientRestController {
         User user = this.jwtUserDetailsService.getUserByUsername(this.jwtTokenUtil.getUsernameFromToken(Authorization.substring(7)));
         Optional<Recipient> recipient = recipientService.viewInfoById(id);
 
+        PatientInformation patientInformation = this.patientService.viewPatientByUserId(user.getId());
+
         if (recipient.isEmpty()){
             throw new RecipientNotFoundException();
-        }else if (recipient.get().getPatientInformation().getPatientId() != user.getPatientInformation().getPatientId()){
+        }else if (!Objects.equals(recipient.get().getPatientInformation().getPatientId(), patientInformation.getPatientId())){
             throw new UnauthorisedUserException();
         }
 
