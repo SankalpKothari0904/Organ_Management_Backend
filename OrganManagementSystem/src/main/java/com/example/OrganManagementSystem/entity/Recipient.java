@@ -38,6 +38,12 @@ public class Recipient {
         this.priority = priority;
     }
 
+    public Recipient(Integer id, String organName, Integer priority) {
+        this.recipientId = id;
+        this.organName = organName;
+        this.priority = priority;
+    }
+
     public Integer getRecipientId() {
         return recipientId;
     }

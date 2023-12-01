@@ -9,6 +9,7 @@ import com.example.OrganManagementSystem.exception.PatientNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.print.Doc;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,8 +26,12 @@ public class DoctorService {
         this.doctorInfoDAO = doctorInfoDAO;
     }
 
-    public DoctorInformation getDoctorByUserId(Integer id){
-        return doctorInfoDAO.getDoctorByUserId(id);
+    public DoctorInformation getDoctorByUserId(Integer id) throws DoctorNotFoundException{
+        DoctorInformation doctorInformation = doctorInfoDAO.getDoctorByUserId(id);
+        if (doctorInformation == null){
+            throw new DoctorNotFoundException();
+        }
+        return doctorInformation;
     }
 
     public DoctorInformation addDocInfo(DoctorInformation doctorInformation) {
@@ -39,18 +44,10 @@ public class DoctorService {
 
     public Optional<PatientInformation> showPatientById(Integer id) throws PatientNotFoundException {
         Optional<PatientInformation> patientInformation = this.patientInfoDAO.findById(id);
-        if (patientInformation.isEmpty()){
+        if (patientInformation.isEmpty()) {
             throw new PatientNotFoundException();
         }
         return patientInformation;
-    }
-
-    public Optional<DoctorInformation> viewMyInfo(Integer Id) throws DoctorNotFoundException {
-        Optional<DoctorInformation> doctorInformation = this.doctorInfoDAO.findById(Id);
-        if (doctorInformation.isEmpty()){
-            throw new DoctorNotFoundException();
-        }
-        return doctorInformation;
     }
 
     public DoctorInformation updateMyInfo(DoctorInformation doctorInformation){

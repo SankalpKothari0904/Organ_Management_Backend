@@ -40,6 +40,13 @@ public class DoctorInformation {
         this.phoneNo = phoneNo;
     }
 
+    public DoctorInformation(Integer id, String doctorName, String speciality, String phoneNo) {
+        this.doctorId = id;
+        this.doctorName = doctorName;
+        this.speciality = speciality;
+        this.phoneNo = phoneNo;
+    }
+
     public DoctorInformation(){
 
     }

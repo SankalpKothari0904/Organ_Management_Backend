@@ -27,8 +27,12 @@ public class PatientService {
         return patientInfoDAO.save(patientInformation);
     }
 
-    public PatientInformation viewPatientByUserId(Integer id) {
-        return patientInfoDAO.getPatientByUserId(id);
+    public PatientInformation viewPatientByUserId(Integer id) throws PatientNotFoundException{
+        PatientInformation patientInformation  = this.patientInfoDAO.getPatientByUserId(id);
+        if (patientInformation == null){
+            throw new PatientNotFoundException();
+        }
+        return patientInformation;
     }
 
     public Optional<PatientInformation> viewPatientInfo(Integer id) throws PatientNotFoundException {

@@ -40,6 +40,15 @@ public class PatientInformation {
         this.bloodType = bloodGroup;
     }
 
+    public PatientInformation(Integer id, String pname, String gender, String phoneNo, Integer age, String bloodGroup) {
+        this.patientId = id;
+        this.pname = pname;
+        this.gender = gender;
+        this.phoneNo = phoneNo;
+        this.age = age;
+        this.bloodType = bloodGroup;
+    }
+
     public PatientInformation() {
 
     }
