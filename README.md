@@ -74,7 +74,7 @@ They are responsible for communicating with the database. All the operations to 
 
 * We used postman to make sure each of the features works.
 
-The report for the same can be found [here](./newman/doc.html).
+The report for the same can be found [here](https://github.com/siddharth-kothari9403/Organ_Management_Backend/blob/main/newman/doc.html).
 
 * We used JUnit and Mockito to test the following :-
       
